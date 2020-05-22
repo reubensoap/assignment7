@@ -41,9 +41,9 @@ public class AccountHolder implements Comparable<AccountHolder> {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "accountHolder")
     private AccountHolderContactDetails contact;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private User user;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+	User user;
     
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "holder_id", referencedColumnName = "holder_id")
@@ -116,6 +116,14 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		this.id = id;
 	}
 	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
 	public List<CheckingAccount> getCheckingAccountsList() {
 		return checkingAccountsList;
 	}
@@ -146,14 +154,6 @@ public class AccountHolder implements Comparable<AccountHolder> {
 
 	public void setContact(AccountHolderContactDetails contact) {
 		this.contact = contact;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public int getNumberOfCheckingAccounts(){
@@ -213,4 +213,8 @@ public class AccountHolder implements Comparable<AccountHolder> {
     	} else
     		return -1;
     }
+
+
+    
+    
 }

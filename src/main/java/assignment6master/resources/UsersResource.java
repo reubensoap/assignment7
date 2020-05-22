@@ -55,7 +55,7 @@ public class UsersResource {
 	}
 	
 	@RequestMapping(value = "/authenticate/createUser")
-	public User createNewUser(@RequestBody @Valid User newUser) {
+	public User createNewUser(@RequestBody User newUser) {
 		usersRepositories.save(newUser);
 		return newUser;
 	}

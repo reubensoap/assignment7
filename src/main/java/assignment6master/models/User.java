@@ -26,31 +26,35 @@ public class User {
 	private int id;
 	
 	private String userName;
+	
 	private String password;
+	
 	private boolean active;
+	
 	private String roles;
-	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JsonIgnore
-	@JoinColumn(name = "holder_id", referencedColumnName = "holder_id")
-	private AccountHolder accountHolder;
-	
+	private List<AccountHolder> accounts;
+
 	public User() {
-		this.userName = "";
-		this.password = "";
-		this.active = true;
-		this.roles = "";
+		userName = "";
+		password = "";
+		active = true;
+		roles = "";
 	}
 	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
 	public String getUserName() {
 		return userName;
 	}
+	
+	public List<AccountHolder> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<AccountHolder> accounts) {
+		this.accounts = accounts;
+	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -60,6 +64,10 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public int getId() {
+		return id;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -72,16 +80,5 @@ public class User {
 	public void setRoles(String roles) {
 		this.roles = roles;
 	}
-
-	public AccountHolder getAccountHolder() {
-		return accountHolder;
-	}
-
-	public void setAccountHolder(AccountHolder accountHolder) {
-		this.accountHolder = accountHolder;
-	}
-	
-	
-	
 	
 }

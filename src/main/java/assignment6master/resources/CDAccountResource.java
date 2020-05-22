@@ -31,10 +31,10 @@ public class CDAccountResource {
 	CDAccountRepo cdaccountRepo;
 	
 	@Autowired
-	CDOfferingRepo cdofferingRepo;
+	AccountHolderRepo accountHolderRepo;
 	
 	@Autowired
-	AccountHolderRepo accountHolderRepo;
+	CDOfferingRepo offeringRepo;
 	
 	@GetMapping(value = "/CDAccounts")
 	public List<CDAccount> getAll(){
@@ -50,9 +50,9 @@ public class CDAccountResource {
 		return accountHolder.getCdAccountsList();
 	}
 	
-	@PostMapping(value = "/{id}/{offer_id}/CDAccounts")
+	@PostMapping(value = "/{id}/CDAccounts")
 	@ResponseStatus(HttpStatus.CREATED)
-	public CDAccount addCDAccount(@PathVariable("id") final long holder_id, @PathVariable("offer_id") final long offer_id, @RequestBody CDAccount cdaccount) throws NoSuchResourceFoundException, ExceedsCombinedBalanceLimitException, NegativeAmountException  {
+	public CDAccount addCDAccount(@PathVariable("id") final long holder_id, @RequestBody CDAccount cdaccount) throws NoSuchResourceFoundException, ExceedsCombinedBalanceLimitException, NegativeAmountException  {
 		if(holder_id > accountHolderRepo.count()) {
 			throw new NoSuchResourceFoundException("Invalid id");
 		}
@@ -63,8 +63,11 @@ public class CDAccountResource {
 		} else if (cdaccount.getBalance() < 0){
 			throw new NegativeAmountException("Balance below 0");
 		} else {
-			CDOffering offering = cdofferingRepo.getOne(offer_id);
-			cdaccount.setOffering(offering);
+			CDOffering offer = offeringRepo.findById(cdaccount.getOffering().getOffer_id()).orElse(null);
+			List<CDAccount> accountList = offer.getCdAccount();
+			accountList.add(cdaccount);
+			offer.setCdAccount(accountList);
+			cdaccount.setOffering(offer);
 			cdaccount.setHolder_id(holder_id);
 			return cdaccountRepo.save(cdaccount);
 		}

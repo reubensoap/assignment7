@@ -2,6 +2,7 @@ package assignment6master.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,23 +30,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
+		/*
 		http.csrf().disable().authorizeRequests()
-			.antMatchers("/authenicate/createUser").hasRole("ADMIN")
-			.antMatchers("/AccountHolder/").hasRole("ADMIN")
-			.antMatchers("/AccountHolder/CDAccounts").hasRole("ADMIN")
-			.antMatchers("/CDOffering/update/{term}/{interest}").hasRole("ADMIN")
-			.antMatchers("/AccountHolder/CheckingAccounts").hasRole("ADMIN")
-			.antMatchers("/AccountHolder/SavingsAccounts").hasRole("ADMIN")
-			.antMatchers("/CDOffering/all").hasAnyRole("ADMIN", "USER")
-			.antMatchers("/AccountHolder/{id}").hasRole("USER")
-			.antMatchers("/AccountHolder/{id}/CDAccounts").hasRole("USER")
-			.antMatchers("/AccountHolder/{id}/CheckingAccounts").hasRole("USER")
-			.antMatchers("/AccountHolder/{id}/SavingsAccounts").hasRole("USER")
 			.antMatchers("/authenticate").permitAll()
 			.anyRequest().authenticated().and().sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+		
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		*/
+		
+		http.csrf().disable().authorizeRequests()
+		.antMatchers("/AccountHolder/**").hasAuthority("ADMIN")
+		.antMatchers("/authenticate/createUser").hasAuthority("ADMIN")
+		.antMatchers(HttpMethod.POST, "/CDOffering/").hasAuthority("ADMIN")
+		.antMatchers(HttpMethod.GET, "/CDOffering/").hasAnyAuthority("ADMIN", "AccountHolder")
+		.antMatchers("/Me/**").hasAuthority("AccountHolder")
+		.antMatchers("/authenticate").permitAll()
+		.anyRequest().authenticated().and().sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		
 	}
 	
